@@ -1,92 +1,123 @@
-# T-Edu Java Project 1
+# Описание
 
+Разработайте консольную версию игры "Виселица", в которой игрок пытается
+угадать загаданное слово, вводя буквы по одной за раз.
 
+Слово выбирается по уровню сложности и категории, случайно, из предварительно
+заданного списка слов.
 
-## Getting started
+Количество попыток ограничено, и за каждую неверную догадку
+визуализируется часть виселицы и фигурки висельника.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+# Функциональные требования
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Не интерактивный (тестовый) режим работы
 
-## Add your files
+* Программа должна иметь возможность запуска в не интерактивном (без взаимодействия с пользователем) режиме.
+* В не интерактивном режиме программа должна принимать два аргумента командной строки: "загаданное" слово и "угаданное".
+* Не интерактивный режим автоматически активируется при вызове программы с двумя аргументами командной строки.
+* От программы ожидается вывод на STDOUT в формате "угаданные_буквы_слова;результат".
+  Не угаданные буквы должны быть заменены символом звёздочки `*`. Подробнее - [см. пример](doc/test-example.md).
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## Интерактивный (пользовательский) режим работы
 
-```
-cd existing_repo
-git remote add origin https://gitlab.tcsbank.ru/d.v.grebenyuk/t-edu-java-project-1.git
-git branch -M master
-git push -uf origin master
-```
+* Интерактивный режим автоматически активируется при вызове программы без аргументов командной строки.
+* Программа должна выбрать случайную категорию (список) слов, если этого не сделал пользователь.
+* Программа должна выбрать случайный уровень сложности, если этого не сделал пользователь.
+* Программа должна выбирать случайное слово из выбранной категории (списка).
+* Игрок вводит одну букву за раз, чтобы угадать слово.
+* Экран должен обновляться после каждого ввода, показывая уже угаданные буквы и прочерки на местах неуказанных букв.
+* Визуализация виселицы должна добавляться постепенно с каждой неправильной попыткой.
+* Игра завершается, когда слово угадано полностью или когда висельник полностью нарисован.
+* Количество попыток ограничено и должно быть указано в начале игры.
+* Приводимая ниже информация относится к интерактивному режиму работы программы.
 
-## Integrate with your tools
+# Нефункциональные требования
 
-- [ ] [Set up project integrations](https://gitlab.tcsbank.ru/d.v.grebenyuk/t-edu-java-project-1/-/settings/integrations)
+* Код должен быть написан ясно и структурировано в соответствии с требованиями,
+  указанными в разделе "Требования к ДЗ" информационного блока.
+* Программа должна иметь текстовый интерфейс.
 
-## Collaborate with your team
+# Описание входных и выходных данных
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+## Ввод
 
-## Test and Deploy
+* Ввод буквы осуществляется через стандартную консоль ввода.
+* Ввод не должен быть чувствительным к регистру.
 
-Use the built-in continuous integration in GitLab.
+## Вывод
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+* На каждом этапе игры должно отображаться текущее состояние угадываемого слова и виселицы.
+* При успешном угадывании буквы нужно обновить состояние слова на экране.
+* При неправильной букве нужно обновить изображение виселицы и указать кол-во оставшихся попыток.
 
-***
+# Инструкции по реализации
 
-# Editing this README
+* Рекомендуется реализовать программу в виде "движка", содержащего логику игры,
+  и интерфейсов для интерактивного и тестового режимов работы.
+* Создайте словарь, содержащий список слов для загадывания.
+* Реализуйте систему для случайного выбора слова из словаря в начале каждой игры.
+* Средства для получения ввода пользователя и вывода состояния игры.
+* Логику определения правильности угаданной буквы.
+* Логику визуализации виселицы при каждой ошибке.
+* Учтите факт сложности игры: не забудьте сделать настраиваемым количество допустимых ошибок, и чтобы эту настройку
+  можно
+* было легко изменять или сделать настройку зависимой от сложности слова.
+* При реализации вам могут пригодиться следующие примитивы:
+* Словарь: получение случайного слова.
+* Игровая сессия: хранения ответа, текущего состояния ответа пользователя, максимального числа попыток и числа
+* произведенных попыток.
+* Результат угадывания (ADT): текущее состояние, количество сделанных попыток, максимальное количеству попыток и
+  сообщение
+* для пользователя.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+# Тестирование
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+* Напишите тесты для проверки правильности выбора слова из списка.
+* Проверьте корректность отображения состояния игры после каждого ввода пользователя.
+* Убедитесь, что введенные буквы корректно обрабатываются вне зависимости от их регистра.
+* Игра не запускается, если загадываемое слово имеет некорректную длину.
+* После превышения заданного количества попыток игра всегда возвращает поражение.
+* Состояние игры корректно изменяется при угадывании/не угадывании.
+* Проверка, что при отгадывании ввод строки длиной больше чем 1 (опечатка) приводит к повторному вводу, без изменения
+* состояния.
 
-## Name
-Choose a self-explaining name for your project.
+# Ограничения и советы
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+* Ограничение: В игре должен быть использован стандартный текстовый ввод/вывод.
+* Ограничение: Не использовать внешние библиотеки для управления состоянием игры и ввода/вывода.
+* Совет: Не пытайтесь делать всё в одной функции/классе, подумайте как вы разделите код и будете его тестировать.
+* Совет: Разделите логику игры и интерфейс на отдельные модули.
+* Совет: Поделите логику на части и начните разработку с какой-то из них, например, выбора случайного слова или машины
+* состояния игры.
+* Совет: Тестируйте каждую часть приложения по мере ее реализации.
+* Совет: Попробуйте представить, что будет если вызвать 2 или более экземпляра игры, подумайте над понятием игровой
+  сессии
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+# Дополнительные материалы
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+* https://en.wikipedia.org/wiki/Hangman_(game)
+* https://habr.com/ru/companies/lanit/articles/660895/
+* https://github.com/topics/terminal-game
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+# Сроки и процедура сдачи ДЗ
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+На реализацию проекта отводится весь модуль. По завершению модуля ассистент имеет полное право выставить 0 баллов за
+работу, если она не была предоставлена в срок.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+Доработка ДЗ по замечаниям возможна до дедлайна. Доработка ДЗ после дедлайна согласуется с ассистентом, после доработки
+количество баллов может быть увеличено.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+В ответ на задание нужно прислать кликабельную ссылку на репозиторий.
+Больше подробностей по сдаче ДЗ можно найти в разделе "Информационный блок".
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+# Критерии оценки
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+За задание можно получить 100 баллов.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
++15 бонусов за реализацию механизма подсказки, например, для слова "бабушка"
+подсказкой может быть "близкий родственник".
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Дополнительно можно получить личные бонусные баллы на усмотрение ассистента.
+Детали о снятии обычных и начислении бонусных баллов можно найти
+в разделе "Информационный блок".
