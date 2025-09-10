@@ -3,7 +3,7 @@
 ## Запуск
 
 ```shell
-java Game arg1 arg2
+scala-cli run Hangman.scala -M hangmanTest -- arg1 arg2
 # arg1 - "загаданное" слово
 # arg2 - "результат угадывания" (проверочное слово), имитирует пользовательский ввод
 # Слова в arg1 и arg2 будут состоять из одинакового количества знаков.
@@ -18,12 +18,12 @@ java Game arg1 arg2
 ### Слово не угадано
 
 ```shell
-java Game 'волокно' 'толокно'
+scala-cli run Hangman.scala -M hangmanTest -- волокно толокно
 # Вывод: '*олокно;NEG'
 ```
 
 ```shell
-java Game 'волокно' 'барахло'
+scala-cli run Hangman.scala -M hangmanTest --  волокно барахло
 # Вывод: '******о;NEG'
 ```
 ![Слово не угадано](NEG-result.png)
@@ -31,7 +31,7 @@ java Game 'волокно' 'барахло'
 ### Слово угадано верно
 
 ```shell
-java Game 'окно' 'окно'
+scala-cli run Hangman.scala -M hangmanTest --  окно окно
 # Вывод: 'окно;POS'
 ```
 ![Слово угадано верно](POS-result.png)
