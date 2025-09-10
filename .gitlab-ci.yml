@@ -1,11 +1,21 @@
 include:
-  - local: "deploy/app-scala/gitlab-ci.yml"
+  - local: "deploy/app-java/gitlab-ci.yml"
+    rules:
+      - if: $P_LANG == "java"  || $P_LANG == "" || $P_LANG == null
+
+variables:
+#  P_LANG: "java" # Default value, may be overridden via GitLab CI/CD UI
 
 stages:
   - pre
   - acceptance
   - build
   - validate
+
+show_variables:
+  stage: pre
+  script:
+    - printenv | sort
 
 .acceptance_test:
   stage: acceptance
