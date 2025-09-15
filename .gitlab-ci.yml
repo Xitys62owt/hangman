@@ -1,25 +1,49 @@
-image: sbtscala/scala-sbt:eclipse-temurin-jammy-21.0.2_13_1.10.4_2.13.15
-
 stages:
-  - build
-  - test
+  - build-and-test
 
-variables:
-  SBT_OPTS: "-Xmx1G"
-
-before_script:
-  - sbt clean update
-
-build:
-  stage: build
+mr-block:
+  stage: build-and-test
+  interruptible: true
+  allow_failure: false
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - project/*
+        - src/test/**/*
+        - .gitlab-ci.yml
+        - .scalafmt.conf
+        - .scalafix.conf
+        - .sbtopts
+        - build.sbt
+    - when: never
   script:
-    - sbt "scalafmtCheckAll; compile"
-  artifacts:
-    expire_in: 1 week
+    - echo "Please don't change service files"
+    - exit 1
 
-test:
-  stage: test
+mr-build:
+  image: sbtscala/scala-sbt:eclipse-temurin-alpine-21.0.8_9_1.11.6_2.13.16
+  stage: build-and-test
+  interruptible: true
+  allow_failure: false
+  needs:
+    - job: mr-block
+      optional: true
+      artifacts: false
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+    - when: never
   script:
-    - sbt test
-  artifacts:
-    expire_in: 1 week
+    - sbt "scalafmtCheckAll; scalafmtSbtCheck; compile; test"
+
+
+master-build:
+  image: sbtscala/scala-sbt:eclipse-temurin-alpine-21.0.8_9_1.11.6_2.13.16
+  stage: build-and-test
+  interruptible: true
+  allow_failure: false
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE != "api"
+      when: always
+    - when: never
+  script:
+    - sbt "scalafmtCheckAll; scalafmtSbtCheck; compile"
