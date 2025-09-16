@@ -6,28 +6,26 @@ import tbank.academy.scala.hangman.Hangman.*
 class HangmanSpec extends AnyFunSuite {
 
   test("Угадана одна буква, остальные не совпадают") {
-    assert(hangmanTest("волокно", "толокно") == "*олокно;NEG")
+    assert(hangmanTest("волокно", "толокно") == Right("*олокно;NEG"))
   }
 
   test("Угаданы все буквы") {
-    assert(hangmanTest("привет", "привет") == "привет;POS")
+    assert(hangmanTest("привет", "привет") == Right("привет;POS"))
   }
 
   test("Не угаданы все буквы, кроме последней") {
-    assert(hangmanTest("волокно", "барахло") == "******о;NEG")
+    assert(hangmanTest("волокно", "барахло") == Right("******о;NEG"))
   }
 
   test("Слово частично угадано") {
-    assert(hangmanTest("тестирование", "теееиировие") == "те*еи*ровие;NEG")
+    assert(hangmanTest("тестирование", "теееиировие") == Right("те*еи*ровие;NEG"))
   }
 
   test("Пустые строки (допустимые по условию)") {
-    assert(hangmanTest("", "") == ";POS")
+    assert(hangmanTest("", "") == Right(";POS"))
   }
 
   test("Бросает исключение, если длина слов разная") {
-    intercept[IllegalArgumentException] {
-      hangmanTest("короткое", "длинноеслово")
-    }
+    assert(hangmanTest("короткое", "длинноеслово").isLeft)
   }
 }
