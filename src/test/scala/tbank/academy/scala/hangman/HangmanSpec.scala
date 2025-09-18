@@ -13,9 +13,9 @@ class HangmanSpec extends AnyFunSuite {
     assert(hangmanTest("привет", "привет") == Right("привет;POS"))
   }
 
-    test("Угаданы все буквы (не обязательно в том же порядке)") {
-        assert(hangmanTest("привет", "ивтепр") == Right("привет;POS"))
-    }
+  test("Угаданы все буквы (не обязательно в том же порядке)") {
+    assert(hangmanTest("привет", "ивтепр") == Right("привет;POS"))
+  }
 
   test("Не угаданы все буквы, кроме последней") {
     assert(hangmanTest("волокно", "бархло") == Right("*оло**о;NEG"))
