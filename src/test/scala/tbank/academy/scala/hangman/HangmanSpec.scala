@@ -1,35 +1,36 @@
 package tbank.academy.scala.hangman
 
-import org.scalatest.funsuite.AnyFunSuite
-import tbank.academy.scala.hangman.Hangman.*
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import tbank.academy.scala.hangman.Hangman.hangmanTest
 
-class HangmanSpec extends AnyFunSuite {
+class HangmanSpec extends AnyFlatSpec {
 
-  test("Угаданы все буквы, кроме одной") {
-    assert(hangmanTest("волокно", "толкн") == Right("*олокно;NEG"))
+  "HangmanSpec" should "Угаданы все буквы, кроме одной" in {
+    hangmanTest("волокно", "толкн") shouldBe Right("*олокно;NEG")
   }
 
-  test("Угаданы все буквы") {
-    assert(hangmanTest("привет", "привет") == Right("привет;POS"))
+  it should "Угаданы все буквы" in {
+    hangmanTest("привет", "привет") shouldBe Right("привет;POS")
   }
 
-  test("Угаданы все буквы (не обязательно в том же порядке)") {
-    assert(hangmanTest("привет", "ивтепр") == Right("привет;POS"))
+  it should "Угаданы все буквы (не обязательно в том же порядке)" in {
+    hangmanTest("привет", "ивтепр") shouldBe Right("привет;POS")
   }
 
-  test("Не угаданы все буквы, кроме последней") {
-    assert(hangmanTest("волокно", "бархло") == Right("*оло**о;NEG"))
+  it should "Не угаданы все буквы, кроме последней" in {
+    hangmanTest("волокно", "бархло") shouldBe Right("*оло**о;NEG")
   }
 
-  test("Слово частично угадано") {
-    assert(hangmanTest("тестирование", "теиров") == Right("те*тиров**ие;NEG"))
+  it should "Слово частично угадано" in {
+    hangmanTest("тестирование", "теиров") shouldBe Right("те*тиров**ие;NEG")
   }
 
-  test("Пустые строки (допустимые по условию)") {
-    assert(hangmanTest("", "") == Right(";POS"))
+  it should "Пустые строки (допустимые по условию)" in {
+    hangmanTest("", "") shouldBe Right(";POS")
   }
 
-  test("Бросает исключение, если вводится невалидный символ") {
-    assert(hangmanTest("короткое", "длиное/слово").isLeft)
+  it should "Бросает исключение, если вводится невалидный символ" in {
+    hangmanTest("короткое", "длиное/слово").isLeft shouldBe true
   }
 }

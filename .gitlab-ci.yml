@@ -9,7 +9,6 @@ mr-block:
     - if: $CI_MERGE_REQUEST_ID
       changes:
         - project/*
-        - src/test/**/*
         - .gitlab-ci.yml
         - .scalafmt.conf
         - .scalafix.conf
@@ -33,7 +32,7 @@ mr-build:
     - if: $CI_MERGE_REQUEST_ID
     - when: never
   script:
-    - sbt "scalafmtCheckAll; scalafmtSbtCheck; compile; test"
+    - sbt "scalafmtCheckAll; scalafmtSbtCheck; scalafixEnable; scalafixAll --check; compile; test"
 
 
 master-build:
@@ -42,8 +41,8 @@ master-build:
   interruptible: true
   allow_failure: false
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE != "api"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: always
     - when: never
   script:
-    - sbt "scalafmtCheckAll; scalafmtSbtCheck; compile"
+    - sbt "scalafmtCheckAll; scalafmtSbtCheck; scalafixEnable; scalafixAll --check; compile"
