@@ -13,7 +13,6 @@ mr-block:
         - .scalafmt.conf
         - .scalafix.conf
         - .sbtopts
-        - build.sbt
     - when: never
   script:
     - echo "Please don't change service files"
