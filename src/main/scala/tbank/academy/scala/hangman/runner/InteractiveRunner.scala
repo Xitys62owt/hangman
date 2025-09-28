@@ -4,6 +4,8 @@ import tbank.academy.scala.hangman.core.{CategoryName, Difficulty, GameEngine, G
 import tbank.academy.scala.hangman.visual.Visualizer
 import tbank.academy.scala.hangman.dictionary.{Dictionary, WordWithHint}
 
+import scala.annotation.tailrec
+
 object InteractiveRunner {
   private def isCyrillic(c: Char): Boolean = {
     c >= 'а' && c <= 'я' || c >= 'А' && c <= 'Я' || c == 'ё' || c == 'Ё'
@@ -60,6 +62,7 @@ object InteractiveRunner {
 
     visualizer.drawStartState()
 
+    @tailrec
     def gameLoop(state: GameState): Unit = {
       if (!state.isGameOver) {
         val input = scala.io.StdIn.readLine("Введите букву или попросите подсказку: ").trim
