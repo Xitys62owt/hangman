@@ -4,9 +4,11 @@ import scala.util.Random
 
 import tbank.academy.scala.hangman.core.{CategoryName, Difficulty}
 import tbank.academy.scala.hangman.error.DomainError
-    
+
+case class WordWithHint(word: String, hint: String)
+
 case class Dictionary(
-  wordsByCategory: Map[CategoryName, Map[Difficulty, List[String]]]
+    wordsByCategory: Map[CategoryName, Map[Difficulty, List[WordWithHint]]]
 ) {
   private def getRandomCategory(): Either[DomainError, CategoryName] = {
     val categories = getCategories()
@@ -19,7 +21,7 @@ case class Dictionary(
 
   def getCategories(): List[CategoryName] =
     CategoryName.values.toList.filter(wordsByCategory.contains)
-  
+
   def getDifficulties(category: Option[CategoryName] = None): List[Difficulty] = {
     category match {
       case Some(cat) =>
@@ -29,13 +31,15 @@ case class Dictionary(
     }
   }
 
-  def getRandomWord(category: Option[CategoryName] = None, 
-                   difficulty: Option[Difficulty] = None): Either[DomainError, String] = {
+  def getRandomWord(
+      category: Option[CategoryName] = None,
+      difficulty: Option[Difficulty] = None
+  ): Either[DomainError, WordWithHint] = {
     getRandomCategory() match {
-      case Left(error) => Left(error)
+      case Left(error)           => Left(error)
       case Right(randomCategory) =>
         val selectedCategory = category.getOrElse(randomCategory)
-        
+
         val difficulties = getDifficulties(Some(selectedCategory))
         if (difficulties.isEmpty) {
           Left(DomainError.NoDifficultiesAvailable)
@@ -47,13 +51,13 @@ case class Dictionary(
           wordsByCategory
             .get(selectedCategory)
             .flatMap(_.get(selectedDifficulty))
-            .flatMap(words => 
-              if words.isEmpty then None
+            .flatMap(words =>
+              if (words.isEmpty) then None
               else Some(words(Random.nextInt(words.size)))
             ) match {
-              case Some(word) => Right(word)
-              case None => Left(DomainError.NoWordsAvailable)
-            }
+            case Some(word) => Right(word)
+            case None       => Left(DomainError.NoWordsAvailable)
+          }
         }
     }
   }
@@ -62,11 +66,12 @@ case class Dictionary(
 object Dictionary {
   def loadFromWordCategories(): Dictionary = {
     val wordsByCategory = CategoryName.values.flatMap { category =>
-      val categoryFileName = s"src/main/scala/tbank/academy/scala/hangman/dictionary/wordCategories/${CategoryName.toStringEng(category)}.txt"
+      val categoryFileName =
+        s"src/main/scala/tbank/academy/scala/hangman/dictionary/wordCategories/${CategoryName.toStringEng(category)}.txt"
       scala.util.Try {
         val source = scala.io.Source.fromFile(categoryFileName, "UTF-8")
         try {
-          val content = source.mkString
+          val content         = source.mkString
           val difficultiesMap = parseCategoryFile(content)
           Some(category -> difficultiesMap)
         } finally {
@@ -74,29 +79,38 @@ object Dictionary {
         }
       }.getOrElse(None)
     }.toMap
-    
+
     Dictionary(wordsByCategory)
   }
 
-  def parseCategoryFile(content: String): Map[Difficulty, List[String]] = {
-    val lines = content.split("\n").map(_.trim).filter(_.nonEmpty)
-    val (_, result) = lines.foldLeft((Option.empty[Difficulty], Map.empty[Difficulty, List[String]])) {
+  def parseCategoryFile(content: String): Map[Difficulty, List[WordWithHint]] = {
+    val lines       = content.split("\n").map(_.trim).filter(_.nonEmpty)
+    val (_, result) = lines.foldLeft((Option.empty[Difficulty], Map.empty[Difficulty, List[WordWithHint]])) {
       case ((currentDifficulty, acc), line) =>
-        if line.endsWith(":") then
+        if (line.endsWith(":")) {
           val difficultyName = line.dropRight(1).trim
-          Difficulty.values.find(d => Difficulty.toStringEng(d) == difficultyName) match
+          Difficulty.values.find(d => Difficulty.toStringEng(d) == difficultyName) match {
             case Some(difficulty) => (Some(difficulty), acc)
-            case None => (currentDifficulty, acc)
-        else
-          currentDifficulty match
+            case None             => (currentDifficulty, acc)
+          }
+        } else {
+          currentDifficulty match {
             case Some(difficulty) =>
+              val parts    = line.split(";", 2)
+              val wordHint = if (parts.length == 2) {
+                WordWithHint(parts(0).trim, parts(1).trim)
+              } else {
+                WordWithHint(line, "")
+              }
               val words = acc.getOrElse(difficulty, Nil)
-              (currentDifficulty, acc + (difficulty -> (line :: words)))
+              (currentDifficulty, acc + (difficulty -> (wordHint :: words)))
             case None =>
               (currentDifficulty, acc)
+          }
+        }
     }
-    
-    result.map { case (difficulty, words) => 
+
+    result.map { case (difficulty, words) =>
       difficulty -> words.reverse
     }
   }

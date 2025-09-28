@@ -5,8 +5,8 @@ import tbank.academy.scala.hangman.error.DomainError
 
 object TestRunner {
   def runTest(wordToGuess: String, guesses: String): Either[DomainError, String] = {
-    val initialState = GameEngine.initGame(wordToGuess, 0)
-    
+    val initialState = GameEngine.initGame(wordToGuess, 0, "")
+
     val finalState = guesses.foldLeft(initialState) { (state, guess) =>
       if (state.isGameOver) state
       else {
@@ -14,10 +14,10 @@ object TestRunner {
         newState
       }
     }
-    
+
     val maskedWord = finalState.currentMaskedWord
-    val result = if (finalState.isWon) "POS" else "NEG"
-    
+    val result     = if (finalState.isWon) "POS" else "NEG"
+
     Right(s"$maskedWord;$result")
   }
 }

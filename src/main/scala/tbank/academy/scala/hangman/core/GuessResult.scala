@@ -1,8 +1,10 @@
 package tbank.academy.scala.hangman.core
 
-enum GuessResult:
-  case Correct
-  case Incorrect
-  case AlreadyGuessed
-  case GameWon
-  case GameLost
+sealed trait GuessResult
+object GuessResult {
+  case object Correct        extends GuessResult
+  case object Incorrect      extends GuessResult
+  case object AlreadyGuessed extends GuessResult
+  case object GameWon        extends GuessResult
+  case object GameLost       extends GuessResult
+}

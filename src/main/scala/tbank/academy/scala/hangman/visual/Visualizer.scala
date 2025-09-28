@@ -70,14 +70,14 @@ class Visualizer(maxAttempts: Int = 6) {
   )
 
   private def getScaledAttempts(attempts: Int): String = {
-    val scaledAttempts = 
+    val scaledAttempts =
       if (maxAttempts == 6) {
         attempts
       } else {
         val ratio = attempts.toDouble / maxAttempts
         (ratio * 7).toInt.min(7)
       }
-    
+
     hangmanParts(scaledAttempts.min(hangmanParts.size - 1))
   }
 
@@ -99,16 +99,16 @@ class Visualizer(maxAttempts: Int = 6) {
     drawHangman(state.attempts)
     drawWordState(state.currentMaskedWord)
     result match {
-      case "Correct" => 
+      case "Correct" =>
         println("\nПравильно!")
-      case "Incorrect" => 
+      case "Incorrect" =>
         println("\nНеправильно!")
-      case "AlreadyGuessed" => 
+      case "AlreadyGuessed" =>
         println("\nВы уже вводили эту букву")
-      case "GameWon" => 
+      case "GameWon" =>
         println("\nПоздравляем! Вы выиграли!")
         println(s"Загаданное слово: ${state.word}")
-      case "GameLost" => 
+      case "GameLost" =>
         println("\nК сожалению, вы проиграли")
         println(s"Загаданное слово: ${state.word}")
     }

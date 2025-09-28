@@ -7,7 +7,7 @@ object GameEngine {
       (state, GuessResult.AlreadyGuessed)
     } else if (state.word.toLowerCase.contains(normalizedLetter)) {
       val newState = state.copy(guessedLetters = state.guessedLetters + normalizedLetter)
-      
+
       if (newState.isWon) (newState, GuessResult.GameWon)
       else (newState, GuessResult.Correct)
     } else {
@@ -15,12 +15,12 @@ object GameEngine {
         guessedLetters = state.guessedLetters + normalizedLetter,
         attempts = state.attempts + 1
       )
-      
+
       if (newState.isLost) (newState, GuessResult.GameLost)
       else (newState, GuessResult.Incorrect)
     }
   }
-  
-  def initGame(word: String, maxAttempts: Int = 6): GameState = 
-    GameState(word = word, maxAttempts = maxAttempts)
+
+  def initGame(word: String, maxAttempts: Int = 6, hint: String): GameState =
+    GameState(word = word, maxAttempts = maxAttempts, hint = hint)
 }

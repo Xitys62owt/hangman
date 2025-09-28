@@ -4,7 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import tbank.academy.scala.hangman.Hangman.hangmanTest
 import tbank.academy.scala.hangman.core.{Difficulty, GameEngine, GameState, GuessResult}
-import tbank.academy.scala.hangman.dictionary.Dictionary
+import tbank.academy.scala.hangman.dictionary.{Dictionary, WordWithHint}
 import tbank.academy.scala.hangman.visual.Visualizer
 import tbank.academy.scala.hangman.error.DomainError
 import java.io.ByteArrayOutputStream
@@ -53,7 +53,7 @@ class HangmanSpec extends AnyFlatSpec with Matchers {
 
   // Тесты для GameEngine
   "GameEngine" should "Корректно обрабатывать правильные буквы" in {
-    val state              = GameEngine.initGame("тест", 6)
+    val state              = GameEngine.initGame("тест", 6, "подсказка")
     val (newState, result) = GameEngine.makeGuess(state, 'т')
 
     val _ = result shouldBe GuessResult.Correct
@@ -62,7 +62,7 @@ class HangmanSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "Корректно обрабатывать неправильные буквы" in {
-    val state              = GameEngine.initGame("тест", 6)
+    val state              = GameEngine.initGame("тест", 6, "подсказка")
     val (newState, result) = GameEngine.makeGuess(state, 'а')
 
     val _ = result shouldBe GuessResult.Incorrect
@@ -71,7 +71,7 @@ class HangmanSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "Не засчитывать повторные попытки неправильных букв" in {
-    val state            = GameEngine.initGame("тест", 6)
+    val state            = GameEngine.initGame("тест", 6, "подсказка")
     val (state1, _)      = GameEngine.makeGuess(state, 'а')
     val (state2, result) = GameEngine.makeGuess(state1, 'а')
 
@@ -80,7 +80,7 @@ class HangmanSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "Не засчитывать повторные попытки правильных букв" in {
-    val state            = GameEngine.initGame("тест", 6)
+    val state            = GameEngine.initGame("тест", 6, "подсказка")
     val (state1, _)      = GameEngine.makeGuess(state, 'т')
     val (state2, result) = GameEngine.makeGuess(state1, 'т')
 
@@ -89,7 +89,7 @@ class HangmanSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "Быть нечувствительным к регистру" in {
-    val state              = GameEngine.initGame("Тест", 6)
+    val state              = GameEngine.initGame("Тест", 6, "подсказка")
     val (newState, result) = GameEngine.makeGuess(state, 'Т')
 
     val _ = result shouldBe GuessResult.Correct
@@ -97,7 +97,7 @@ class HangmanSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "Определять победу" in {
-    val state                = GameEngine.initGame("тест", 6)
+    val state                = GameEngine.initGame("тест", 6, "подсказка")
     val (state1, _)          = GameEngine.makeGuess(state, 'т')
     val (state2, _)          = GameEngine.makeGuess(state1, 'е')
     val (finalState, result) = GameEngine.makeGuess(state2, 'с')
@@ -107,7 +107,7 @@ class HangmanSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "Определять поражение" in {
-    val state                = GameEngine.initGame("тест", 2)
+    val state                = GameEngine.initGame("тест", 2, "подсказка")
     val (state1, _)          = GameEngine.makeGuess(state, 'а')
     val (finalState, result) = GameEngine.makeGuess(state1, 'б')
 
@@ -136,6 +136,11 @@ class HangmanSpec extends AnyFlatSpec with Matchers {
     state.isLost shouldBe true
   }
 
+  it should "Корректно хранить подсказку" in {
+    val state = GameState("тест", Set('т'), 1, 6, "подсказка")
+    state.hint shouldBe "подсказка"
+  }
+
   // Тесты для Dictionary
   "Dictionary" should "Загружать слова из файлов" in {
     val dictionary = Dictionary.loadFromWordCategories()
@@ -157,19 +162,19 @@ class HangmanSpec extends AnyFlatSpec with Matchers {
   it should "Правильно парсить файлы со словами" in {
     val content =
       """Noob:
-        |слово1
-        |слово2
+        |слово1;подсказка1
+        |слово2;подсказка2
         |
         |Medium:
-        |слово_3
+        |слово_3;подсказка3
         |""".stripMargin
 
     val map = Dictionary.parseCategoryFile(content)
     val _   = map.keySet should contain(Difficulty.Noob)
     val _   = map.keySet should contain(Difficulty.Medium)
-    val _   = map(Difficulty.Noob) should contain("слово1")
-    val _   = map(Difficulty.Noob) should contain("слово2")
-    val _   = map(Difficulty.Medium) should contain("слово_3")
+    val _   = map(Difficulty.Noob) should contain(WordWithHint("слово1", "подсказка1"))
+    val _   = map(Difficulty.Noob) should contain(WordWithHint("слово2", "подсказка2"))
+    val _   = map(Difficulty.Medium) should contain(WordWithHint("слово_3", "подсказка3"))
   }
 
   // Тесты для Visualizer
