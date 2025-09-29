@@ -10,7 +10,6 @@ mr-block:
       changes:
         - project/*
         - .gitlab-ci.yml
-        - .scalafmt.conf
         - .scalafix.conf
         - .sbtopts
     - when: never
