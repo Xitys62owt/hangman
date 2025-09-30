@@ -1,6 +1,7 @@
 package tbank.academy.scala.hangman.dictionary
 
 import scala.util.Random
+import scala.util.Using
 
 import tbank.academy.scala.hangman.core.{CategoryName, Difficulty}
 import tbank.academy.scala.hangman.error.DomainError
@@ -68,15 +69,10 @@ object Dictionary {
     val wordsByCategory = CategoryName.values.flatMap { category =>
       val categoryFileName =
         s"src/main/scala/tbank/academy/scala/hangman/dictionary/wordCategories/${CategoryName.toStringEng(category)}.txt"
-      scala.util.Try {
-        val source = scala.io.Source.fromFile(categoryFileName, "UTF-8")
-        try {
-          val content         = source.mkString
-          val difficultiesMap = parseCategoryFile(content)
-          Some(category -> difficultiesMap)
-        } finally {
-          source.close()
-        }
+      Using(scala.io.Source.fromFile(categoryFileName, "UTF-8")) { source =>
+        val content         = source.mkString
+        val difficultiesMap = parseCategoryFile(content)
+        Some(category -> difficultiesMap)
       }.getOrElse(None)
     }.toMap
 

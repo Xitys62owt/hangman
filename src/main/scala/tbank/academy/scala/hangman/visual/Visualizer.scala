@@ -3,7 +3,7 @@ package tbank.academy.scala.hangman.visual
 import tbank.academy.scala.hangman.core.GameState
 
 class Visualizer(maxAttempts: Int = 6) {
-  private val hangmanParts = List(
+  private val hangmanParts: List[String] = List(
     """   
        ||===========
        ||/         
